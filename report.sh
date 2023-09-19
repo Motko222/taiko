@@ -1,12 +1,13 @@
 #!/bin/bash
 
 source ~/scripts/taiko/config/env
+cd ~/simple-taiko-node
 
 #docker compose safe
-if command -v docker-compose &>/dev/null; then
-    docker_compose="docker-compose"
-elif docker --help | grep -q "compose"; then
-    docker_compose="docker compose"
+if command -v docker-compose &>/dev/null
+then docker_compose="docker-compose"
+elif docker --help | grep -q "compose"
+then docker_compose="docker compose"
 fi
 
 pid=$(pgrep 'geth')
@@ -23,6 +24,7 @@ temp1=$(curl -s POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0
    | jq -r .result.number | sed 's/0x//')
 if [ -z $temp1 ]; then l2netHeight=""; else l2netHeight=$(( 16#$temp1 )); fi
 diffblock=$(($l2netHeight-$l2height))
+foldersize=$(du -hs ~/simple-taiko-node | awk '{print $1}')
 
 if [ $diffblock -le 5 ]
   then 
@@ -39,14 +41,18 @@ if [ -z $l2netHeight ]
     note="cannot fetch network height"
 fi
 
-
-if [ -z $pid ]; then status="error";note="not running"; else status="ok";note="h2=$l2height, f2=$l2fee"; fi
-foldersize=$(du -hs $HOME/simple-taiko-node | awk '{print $1}')
+if [ -z $pid ]
+then 
+  status="error"
+  note="not running"
+fi
 
 echo "updated='$(date +'%y-%m-%d %H:%M')'"
 echo "version='$version'" 
 echo "process='$pid'" 
 echo "status=$status"
+echo "height=$l2height"
+echo "netHeight=$l2netHeight"
 echo "note='$note'" 
 echo "network='$network'" 
 echo "type=$type"
