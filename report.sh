@@ -10,7 +10,7 @@ elif docker --help | grep -q "compose"
 then docker_compose="docker compose"
 fi
 
-pid=$(pgrep 'geth')
+pid=$(ps aux | grep -E "geth --taiko" | grep -v grep | awk '{print $2}')
 last="never";prove="never"
 l2propose=$($docker_compose logs taiko_client_proposer | grep "Propose transactions succeeded" | tail -1 | awk '{print $4}')
 l2prove=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | tail -1 | awk '{print $4}')
