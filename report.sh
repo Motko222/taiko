@@ -11,10 +11,12 @@ then docker_compose="docker compose"
 fi
 
 pid=$(ps aux | grep -E "geth --taiko" | grep -v grep | awk '{print $2}')
-last="never";prove="never"
-l2propose=$($docker_compose logs taiko_client_proposer | grep "Propose transactions succeeded" | tail -1 | awk '{print $4}')
-l2prove=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | tail -1 | awk '{print $4}')
+
+l2proposeLast=$($docker_compose logs taiko_client_proposer | grep "Propose transactions succeeded" | tail -1 | awk '{print $4}')
+l2proveLast=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | tail -1 | awk '{print $4}')
 l2fee=$($docker_compose logs taiko_client_proposer | grep "proposer does not have enough tko balance" | tail -1 | awk -F 'fee: ' '{print $2}' | sed 's/"//' | awk '{print $1/100000000}')
+l2proposeCount=$($docker_compose logs taiko_client_proposer | grep "Propose transactions succeeded" | wc -l)
+l2proveCount=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | wc -l)
 
 temp1=$(curl -s POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' localhost:8547 \
    | jq -r .result.number | sed 's/0x//')
@@ -29,7 +31,7 @@ foldersize=$(du -hs ~/simple-taiko-node | awk '{print $1}')
 if [ $diffblock -le 5 ]
   then 
     status="ok"
-    note=""
+    note="proved $l2proveCount $l2proveLast, proposed $l2proposeCount $l2proposeLast"
   else 
     status="warning"
     note="sync $l2height/$l2netHeight"; 
@@ -58,5 +60,5 @@ echo "network='$network'"
 echo "type=$type"
 echo "folder=$foldersize"
 echo "id=$id"
-echo "lastpropose='$l2propose'" 
-echo "lastprove='$l2prove'" 
+echo "lastpropose='$l2proposeLast'" 
+echo "lastprove='$l2proveLast'" 
