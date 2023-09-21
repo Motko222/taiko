@@ -12,8 +12,8 @@ fi
 
 pid=$(ps aux | grep -E "geth --taiko" | grep -v grep | awk '{print $2}')
 
-l2proposeLast=$($docker_compose logs taiko_client_proposer | grep "Propose transactions succeeded" | tail -1 | awk '{print $4}')
-l2proveLast=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | tail -1 | awk '{print $4}')
+l2proposeLast=$($docker_compose logs taiko_client_proposer | grep "Propose transactions succeeded" | tail -1 | awk 'match($0, /[0-9][0-9]-[0-9][0-9]\|[0-9][0-9]:[0-9][0-9]/) {print substr($0, RSTART, RLENGTH)}')
+l2proveLast=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | tail -1 | awk 'match($0, /[0-9][0-9]-[0-9][0-9]\|[0-9][0-9]:[0-9][0-9]/) {print substr($0, RSTART, RLENGTH)}')
 l2fee=$($docker_compose logs taiko_client_proposer | grep "proposer does not have enough tko balance" | tail -1 | awk -F 'fee: ' '{print $2}' | sed 's/"//' | awk '{print $1/100000000}')
 l2proposeCount=$($docker_compose logs taiko_client_proposer | grep "Propose transactions succeeded" | wc -l)
 l2proveCount=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | wc -l)
