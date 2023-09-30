@@ -20,11 +20,11 @@ l2proveCount=$($docker_compose logs taiko_client_prover_relayer | grep "Your blo
 
 temp1=$(curl -s POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' localhost:8547 \
    | jq -r .result.number | sed 's/0x//')
-if [ -z $temp1 ]; then l2height=""; else l2height=$(( 16#$temp1 )); fi
+if [ -z $temp1 ]; then l2height=0; else l2height=$(( 16#$temp1 )); fi
 
 temp1=$(curl -s POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' 43.130.29.245:8545 \
    | jq -r .result.number | sed 's/0x//')
-if [ -z $temp1 ]; then l2netHeight=""; else l2netHeight=$(( 16#$temp1 )); fi
+if [ -z $temp1 ]; then l2netHeight=0; else l2netHeight=$(( 16#$temp1 )); fi
 diffblock=$(($l2netHeight-$l2height))
 foldersize=$(du -hs ~/simple-taiko-node | awk '{print $1}')
 
@@ -37,7 +37,7 @@ if [ $diffblock -le 5 ]
     note="sync $l2height/$l2netHeight"; 
 fi
 
-if [ -z $l2netHeight ]
+if [ $l2netHeight -eq 0 ]
   then 
     status="warning"
     note="cannot fetch network height"
