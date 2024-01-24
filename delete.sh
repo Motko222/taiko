@@ -1,4 +1,4 @@
-#!/bin.bash
+#!/bin/bash
 
 read -p "This action will wipe current installation, are you sure? " sure
 case $sure in 
