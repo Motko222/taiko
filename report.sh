@@ -15,7 +15,7 @@ l2proposeLast=$($docker_compose logs taiko_client_proposer | grep "Propose trans
 l2proveLast=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | tail -1 | awk 'match($0, /[0-9][0-9]-[0-9][0-9]\|[0-9][0-9]:[0-9][0-9]/) {print substr($0, RSTART, RLENGTH)}')
 l2fee=$($docker_compose logs taiko_client_proposer | grep "proposer does not have enough tko balance" | tail -1 | awk -F 'fee: ' '{print $2}' | sed 's/"//' | awk '{print $1/100000000}')
 l2proposeCount=$($docker_compose logs taiko_client_proposer | grep "Propose transactions succeeded" | wc -l)
-l2proveCount=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | wc -l)
+#l2proveCount=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | wc -l)
 
 temp1=$(curl -s POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' localhost:8547 \
    | jq -r .result.number | sed 's/0x//')
@@ -46,10 +46,8 @@ if [ $l2netHeight -eq 0 ]
     message="cannot fetch network height"
 fi
 
-if [ "$docker_status" = "running" ]
+if [ "$docker_status" -ne "running" ]
 then 
-  status="ok"
-else
   status="error"
   message="docker not running"
 fi
@@ -61,8 +59,8 @@ cat << EOF
   "chain":"$chain",
   "status":"$status",
   "message":"$message",
-  "height":"$height",
-  "netHeight":"$netHeight",
+  "height":"$l2height",
+  "netHeight":"$l2netHeight",
   "lastpropose":"$lastpropose",
   "updated":"$(date --utc +%FT%TZ)"
 }
