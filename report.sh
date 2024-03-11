@@ -46,7 +46,7 @@ if [ $l2netHeight -eq 0 ]
     message="cannot fetch network height"
 fi
 
-if [ "$docker_status" -ne "running" ]
+if [ "$docker_status" != "running" ]
 then 
   status="error"
   message="docker not running"
