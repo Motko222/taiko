@@ -21,12 +21,12 @@ temp1=$(curl -s POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0
    | jq -r .result.number | sed 's/0x//')
 if [ -z $temp1 ]; then l2height=0; else l2height=$(( 16#$temp1 )); fi
 
-temp1=$(curl -s POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' https://rpc.katla.taiko.xyz:8545 \
+temp1=$(curl -s POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", false],"id":1}' https://taiko-katla.blockpi.network/v1/rpc/public \
    | jq -r .result.number | sed 's/0x//')
 if [ -z $temp1 ]; then l2netHeight=0; else l2netHeight=$(( 16#$temp1 )); fi
 diffblock=$(($l2netHeight-$l2height))
 
-docker_status=$(docker inspect  | jq -r .[].State.Status)
+docker_status=$(docker inspect simple-taiko-node_l2_execution_engine_1 | jq -r .[].State.Status)
 chain=katla
 id=taiko-$TAIKO_ID
 bucket=node
