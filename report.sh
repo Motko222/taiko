@@ -12,7 +12,7 @@ then docker_compose="docker compose"
 fi
 
 l2proposeLast=$($docker_compose logs taiko_client_proposer | grep "Propose transactions succeeded" | tail -1 | awk 'match($0, /[0-9][0-9]-[0-9][0-9]\|[0-9][0-9]:[0-9][0-9]/) {print substr($0, RSTART, RLENGTH)}')
-l2proveLast=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | tail -1 | awk 'match($0, /[0-9][0-9]-[0-9][0-9]\|[0-9][0-9]:[0-9][0-9]/) {print substr($0, RSTART, RLENGTH)}')
+#l2proveLast=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | tail -1 | awk 'match($0, /[0-9][0-9]-[0-9][0-9]\|[0-9][0-9]:[0-9][0-9]/) {print substr($0, RSTART, RLENGTH)}')
 l2fee=$($docker_compose logs taiko_client_proposer | grep "proposer does not have enough tko balance" | tail -1 | awk -F 'fee: ' '{print $2}' | sed 's/"//' | awk '{print $1/100000000}')
 l2proposeCount=$($docker_compose logs taiko_client_proposer | grep "Propose transactions succeeded" | wc -l)
 #l2proveCount=$($docker_compose logs taiko_client_prover_relayer | grep "Your block proof was accepted" | wc -l)
@@ -34,7 +34,7 @@ bucket=node
 if [ $diffblock -le 5 ]
   then 
     status="ok"
-    message="proposed $l2proposeCount $l2proposeLast"
+    message="prop $l2proposeCount | last $l2proposeLast"
   else 
     status="warning"
     message="sync $l2height/$l2netHeight"; 
