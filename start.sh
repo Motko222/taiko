@@ -8,4 +8,4 @@ elif docker --help | grep -q "compose"; then
 fi
 
 cd ~/simple-taiko-node
-$docker_compose up -d
+$docker_compose --profile l2_execution_engine up -d
