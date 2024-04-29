@@ -27,7 +27,7 @@ if [ -z $temp1 ]; then l2netHeight=0; else l2netHeight=$(( 16#$temp1 )); fi
 diffblock=$(($l2netHeight-$l2height))
 
 docker_status=$(docker inspect simple-taiko-node_l2_execution_engine_1 | jq -r .[].State.Status)
-chain=katla
+chain=hekla
 id=taiko-$TAIKO_ID
 bucket=node
 
