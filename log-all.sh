@@ -8,4 +8,4 @@ elif docker --help | grep -q "compose"; then
 fi
 
 cd ~/simple-taiko-node
-$docker_compose logs -f --tail 20
+$docker_compose logs --profile l2_execution_engine -f --tail 20
